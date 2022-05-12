@@ -1,0 +1,25 @@
+{
+    "name": "alpshq/statamic-bookmarker",
+    "description": "Add bookmarking ability.",
+    "license": "proprietary",
+    "type": "statamic-addon",
+    "autoload": {
+        "psr-4": {
+            "Alps\\Bookmarker\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Bookmarker",
+            "description": "Add bookmarking ability."
+        },
+        "laravel": {
+            "providers": [
+                "Alps\\Bookmarker\\ServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "statamic/cms": "^3.3"
+    }
+}
