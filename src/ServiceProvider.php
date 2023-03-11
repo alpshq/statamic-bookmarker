@@ -2,6 +2,8 @@
 
 namespace Alps\Bookmarker;
 
+use Alps\Bookmarker\Events\BookmarkCollectionDeleted;
+use Alps\Bookmarker\Events\BookmarkCollectionSaved;
 use Alps\Bookmarker\Http\Controllers\SubmitController;
 use Alps\Bookmarker\Scopes\Bookmarked;
 use Alps\Bookmarker\Stache\BookmarkStore;
@@ -9,6 +11,7 @@ use Alps\Bookmarker\Tags\Bookmarker;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 use phpDocumentor\Reflection\Types\Self_;
+use Statamic\Git\Subscriber;
 use Statamic\Stache\Stache;
 use Statamic\Statamic;
 
@@ -36,6 +39,15 @@ class ServiceProvider extends \Statamic\Providers\AddonServiceProvider
 
     protected $scopes = [
         Bookmarked::class,
+    ];
+
+    protected $listen = [
+        BookmarkCollectionSaved::class => [
+            Subscriber::class . '@commit',
+        ],
+        BookmarkCollectionDeleted::class => [
+            Subscriber::class . '@commit',
+        ],
     ];
 
     public function register()
