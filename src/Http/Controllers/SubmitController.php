@@ -61,7 +61,7 @@ class SubmitController extends Controller
             return redirect()->back(201);
         }
 
-        $bookmark = Bookmark::make($bookmark->id);
+        $bookmark = Bookmark::make($id);
 
         return $this->renderTemplate($request, $bookmark);
     }
