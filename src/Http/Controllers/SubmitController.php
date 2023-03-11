@@ -9,6 +9,7 @@ use Alps\Bookmarker\Stache\BookmarkStore;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Statamic\StaticCaching\Cacher;
+use Statamic\StaticCaching\Cachers\ApplicationCacher;
 use Statamic\View\Antlers\Antlers;
 use Statamic\View\View;
 
@@ -78,10 +79,33 @@ class SubmitController extends Controller
     {
         $path = $this->getPayload($request)['data']['path'] ?? null;
 
-        $this->cacher->getDomains()->each(function($domain) use ($path) {
-            $url = '/' . ltrim($path, '/');
-            $this->cacher->invalidateUrl($url, $domain);
-        });
+        if ($path === null) {
+            return $this;
+        }
+
+        if (method_exists($this->cacher, 'getDomains')) {
+            $this->cacher->getDomains()->each(function($domain) use ($path) {
+                $url = '/' . ltrim($path, '/');
+                $this->cacher->invalidateUrl($url, $domain);
+            });
+
+            return $this;
+        }
+
+        $toInvalidate = $this->cacher->getUrls()
+            ->filter(function (string $cachedUrl) use ($path) {
+                $cachedUrl = explode('?', $cachedUrl);
+
+                return stristr($cachedUrl[0], $path) !== false;
+            })
+            ->values()
+            ->all();
+
+        if (empty($toInvalidate)) {
+            $this->cacher->flush();
+        }
+
+        $this->cacher->invalidateUrls($toInvalidate);
 
         return $this;
     }
