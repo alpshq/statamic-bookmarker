@@ -10,10 +10,11 @@ class PayloadHasher
     {
     }
 
-    public function createPayload(string $content, array $data): string
+    public function createPayload(string $content, array $viewData, array $data = []): string
     {
         $json = json_encode([
             'content' => $content,
+            'viewData' => $viewData,
             'data' => $data,
         ]);
 

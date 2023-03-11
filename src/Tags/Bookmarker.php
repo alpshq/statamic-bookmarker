@@ -5,6 +5,7 @@ namespace Alps\Bookmarker\Tags;
 use Alps\Bookmarker\Data\Bookmark;
 use Alps\Bookmarker\Data\BookmarkCollection;
 use Alps\Bookmarker\Services\PayloadHasher;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Statamic\Facades\Antlers;
 use Statamic\Support\Arr;
@@ -14,7 +15,7 @@ use Statamic\View\Cascade;
 
 class Bookmarker extends Tags
 {
-    public function __construct(private PayloadHasher $payloadHasher)
+    public function __construct(private Request $request, private PayloadHasher $payloadHasher)
     {
     }
 
@@ -27,10 +28,10 @@ class Bookmarker extends Tags
 
         $scalars = $this->params->filter(fn ($value) => is_scalar($value))->all();
 
-        BookmarkCollection::query()
-            ->whereNotNull('items.lol')
-            ->where('items.lol', false)
-            ->count();
+//        BookmarkCollection::query()
+//            ->whereNotNull('items.lol')
+//            ->where('items.lol', false)
+//            ->count();
 
         $collection = BookmarkCollection::user();
         $bookmark = $collection->getBookmark($id);
@@ -49,7 +50,9 @@ class Bookmarker extends Tags
 
         $data['slot'] = $this->isPair ? trim($this->parse($data)) : null;
 
-        $payload = $this->payloadHasher->createPayload($this->content, $scalars);
+        $payload = $this->payloadHasher->createPayload($this->content, $scalars, [
+            'path' => $this->request->path(),
+        ]);
         $hash = $this->payloadHasher->calculateHash($payload);
 
         $params = [

@@ -8,14 +8,18 @@ use Alps\Bookmarker\Services\PayloadHasher;
 use Alps\Bookmarker\Stache\BookmarkStore;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Statamic\StaticCaching\Cacher;
 use Statamic\View\Antlers\Antlers;
 use Statamic\View\View;
 
 class SubmitController extends Controller
 {
+    private array|null $payload = null;
+
     public function __construct(
-        private Antlers $antlers,
+        private Antlers       $antlers,
         private PayloadHasher $payloadHasher,
+        private Cacher        $cacher
     )
     {
     }
@@ -37,6 +41,8 @@ class SubmitController extends Controller
         $bookmarkCollection->addBookmark($bookmark);
         $bookmarkCollection->save();
 
+        $this->invalidatePageCache($request);
+
         if (!$request->isXmlHttpRequest()) {
             return redirect()->back(201);
         }
@@ -57,6 +63,8 @@ class SubmitController extends Controller
             $bookmarkCollection->save();
         }
 
+        $this->invalidatePageCache($request);
+
         if (!$request->isXmlHttpRequest()) {
             return redirect()->back(201);
         }
@@ -66,8 +74,24 @@ class SubmitController extends Controller
         return $this->renderTemplate($request, $bookmark);
     }
 
-    private function renderTemplate(Request $request, Bookmark $bookmark)
+    private function invalidatePageCache(Request $request): self
     {
+        $path = $this->getPayload($request)['data']['path'] ?? null;
+
+        $this->cacher->getDomains()->each(function($domain) use ($path) {
+            $url = '/' . ltrim($path, '/');
+            $this->cacher->invalidateUrl($url, $domain);
+        });
+
+        return $this;
+    }
+
+    private function getPayload(Request $request): array
+    {
+        if ($this->payload !== null) {
+            return $this->payload;
+        }
+
         $payload = $request->input('payload');
         $payload = urldecode($payload);
 
@@ -77,10 +101,15 @@ class SubmitController extends Controller
             abort(401, 'Payload signature invalid.');
         }
 
-        $payload = $this->payloadHasher->parsePayload($payload);
+        return $this->payload = $this->payloadHasher->parsePayload($payload);
+    }
+
+    private function renderTemplate(Request $request, Bookmark $bookmark)
+    {
+        $payload = $this->getPayload($request);
 
         $content = $payload['content'] ?? null;
-        $data = $payload['data'] ?? [];
+        $data = $payload['viewData'] ?? [];
 
         if (!$content) {
             return null;
