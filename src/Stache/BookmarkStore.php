@@ -3,6 +3,8 @@
 namespace Alps\Bookmarker\Stache;
 
 use Alps\Bookmarker\Data\BookmarkCollection;
+use Alps\Bookmarker\Events\BookmarkCollectionDeleted;
+use Alps\Bookmarker\Events\BookmarkCollectionSaved;
 use Illuminate\Support\Facades\Cookie;
 use Statamic\Facades\Stache as StacheFacade;
 use Statamic\Facades\YAML;
@@ -81,5 +83,14 @@ class BookmarkStore extends \Statamic\Stache\Stores\BasicStore
         parent::save($item);
 
         cookie()->queue('bookmarker_collection', $item->cookieId(), 365*24*60);
+
+        BookmarkCollectionSaved::dispatch($item);
+    }
+
+    public function delete($item)
+    {
+        parent::delete($item);
+
+        BookmarkCollectionDeleted::dispatch($item);
     }
 }
