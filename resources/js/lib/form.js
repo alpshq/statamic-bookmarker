@@ -1,10 +1,10 @@
 const setupForm = (win, doc, form) => {
-  if (form.datalist.bookmaker) {
+  if (form.dataset.bookmarker) {
     return;
   }
 
   form.addEventListener('submit', createSubmitHandler());
-  form.datalist.bookmarker = 'true';
+  form.dataset.bookmarker = 'true';
 };
 
 const createSubmitHandler = () => async ev => {
