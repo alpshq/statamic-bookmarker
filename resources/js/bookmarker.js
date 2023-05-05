@@ -1,6 +1,6 @@
 import setupForm from './lib/form';
 
-const setupOnDocumentForms = (win) => {
+const setupDocumentForms = (win) => {
   const doc = win.document;
 
   [...window.document.querySelectorAll('form.alps-bookmarker')]
@@ -8,9 +8,9 @@ const setupOnDocumentForms = (win) => {
 }
 
 ((win) => {
-  setupOnDocumentForms(win);
+  setupDocumentForms(win);
 
   win.document.addEventListener('statamic:nocache.replaced', (ev) => {
-    setupOnDocumentForms(win);
+    setTimeout(() => setupDocumentForms(win), 100);
   });
 })(global);
