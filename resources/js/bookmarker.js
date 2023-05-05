@@ -3,7 +3,7 @@ import setupForm from './lib/form';
 const setupDocumentForms = (win) => {
   const doc = win.document;
 
-  [...window.document.querySelectorAll('form.alps-bookmarker')]
+  [...doc.querySelectorAll('form.alps-bookmarker')]
     .forEach(form => setupForm(win, doc, form));
 }
 

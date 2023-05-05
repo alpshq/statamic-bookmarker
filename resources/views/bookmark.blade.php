@@ -7,7 +7,3 @@
         {!! $slot !!}
     </div>
 </form>
-
-@once
-    <script src="/vendor/statamic-bookmarker/js/bookmarker.js?{{ time() }}" defer></script>
-@endonce
