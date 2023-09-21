@@ -4,12 +4,10 @@ namespace Alps\Bookmarker\Data;
 
 use Alps\Bookmarker\Stache\BookmarkQueryBuilder;
 use Alps\Bookmarker\Stache\BookmarkStore;
-use DateTimeInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use Statamic\Contracts\Query\ContainsQueryableValues;
-use Statamic\Data\ContainsData;
 use Statamic\Data\ExistsAsFile;
 use Statamic\Data\TracksQueriedColumns;
 use Statamic\Data\TracksQueriedRelations;
@@ -19,11 +17,17 @@ use Statamic\Support\Traits\FluentlyGetsAndSets;
 
 class BookmarkCollection implements ContainsQueryableValues
 {
-    use FluentlyGetsAndSets, ExistsAsFile, TracksQueriedColumns, TracksQueriedRelations;
+    use FluentlyGetsAndSets;
+    use ExistsAsFile;
+    use TracksQueriedColumns;
+    use TracksQueriedRelations;
 
     private ?string $id = null;
+
     private ?string $userId = null;
+
     private ?string $cookieId = null;
+
     private Collection|null $items = null;
 
     public static function query(): BookmarkQueryBuilder
@@ -41,11 +45,11 @@ class BookmarkCollection implements ContainsQueryableValues
             $instance = self::query()->where('user_id', $userId)->first();
         }
 
-        if (!$instance && $cookieId) {
+        if (! $instance && $cookieId) {
             $instance = self::query()->where('cookie_id', $cookieId)->first();
         }
 
-        if (!$instance) {
+        if (! $instance) {
             $instance = new self;
             $instance->userId($userId);
         }
@@ -76,9 +80,9 @@ class BookmarkCollection implements ContainsQueryableValues
     {
         return $this
             ->fluentlyGetOrSet('items')
-            ->setter(function($items) {
+            ->setter(function ($items) {
                 return collect($items)
-                    ->map(function($data) {
+                    ->map(function ($data) {
                         if ($data instanceof Bookmark) {
                             return $data;
                         }
@@ -93,18 +97,18 @@ class BookmarkCollection implements ContainsQueryableValues
             ->args(func_get_args());
     }
 
-//    public function itemIds(): array
-//    {
-//        $foo = $this->items()->map(function(Bookmark $bookmark) {
-//            return $bookmark->id . '=' . $bookmark->value;
-//        })->all();
-//
-//        $foo = $this->items()->pluck('value', 'id')->all();
-//
-//        dump($foo);
-//
-//        return $foo;
-//    }
+    //    public function itemIds(): array
+    //    {
+    //        $foo = $this->items()->map(function(Bookmark $bookmark) {
+    //            return $bookmark->id . '=' . $bookmark->value;
+    //        })->all();
+    //
+    //        $foo = $this->items()->pluck('value', 'id')->all();
+    //
+    //        dump($foo);
+    //
+    //        return $foo;
+    //    }
 
     public function getBookmark($entryOrId): ?Bookmark
     {
@@ -119,13 +123,13 @@ class BookmarkCollection implements ContainsQueryableValues
 
         $items = $this->items()->all();
 
-//        $existingIds = array_column($items, 'id');
-//        $idx = array_search($bookmark->id, $existingIds);
-//
-//        if ($idx !== false) {
-//            unset($items[$idx]);
-//            $items = array_values($items);
-//        }
+        //        $existingIds = array_column($items, 'id');
+        //        $idx = array_search($bookmark->id, $existingIds);
+        //
+        //        if ($idx !== false) {
+        //            unset($items[$idx]);
+        //            $items = array_values($items);
+        //        }
 
         $items[] = $bookmark;
 
@@ -167,7 +171,7 @@ class BookmarkCollection implements ContainsQueryableValues
 
     public function save()
     {
-        if (!$this->id()) {
+        if (! $this->id()) {
             $this->id(Stache::generateId());
         }
 
@@ -210,5 +214,4 @@ class BookmarkCollection implements ContainsQueryableValues
     {
         return $this->{$key}() ?? $fallback;
     }
-
 }

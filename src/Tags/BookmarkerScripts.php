@@ -13,6 +13,6 @@ class BookmarkerScripts extends Tags
     {
         $scriptSource = '/vendor/statamic-bookmarker/js/bookmarker.js?' . time();
 
-        return "<script src=\"${scriptSource}\" defer async></script>";
+        return "<script src=\"{$scriptSource}\" defer async></script>";
     }
 }

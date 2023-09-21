@@ -55,19 +55,19 @@ class ServiceProvider extends \Statamic\Providers\AddonServiceProvider
     {
         $this->registerAddonConfig();
 
-//        $this->app->singleton();
+        //        $this->app->singleton();
     }
 
     public function bootAddon()
     {
         $this->bootStores();
 
-        $this->registerWebRoutes(function() {
+        $this->registerWebRoutes(function () {
             Route::prefix('bookmarker/submit')
                 ->name('bookmarker.submit.')
                 ->controller(SubmitController::class)
                 ->middleware(ValidateSignature::class)
-                ->group(function() {
+                ->group(function () {
                     Route::post('', 'handlePost')->name('post');
                     Route::delete('', 'handleDelete')->name('delete');
                 });

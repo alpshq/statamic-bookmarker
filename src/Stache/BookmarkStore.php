@@ -5,10 +5,8 @@ namespace Alps\Bookmarker\Stache;
 use Alps\Bookmarker\Data\BookmarkCollection;
 use Alps\Bookmarker\Events\BookmarkCollectionDeleted;
 use Alps\Bookmarker\Events\BookmarkCollectionSaved;
-use Illuminate\Support\Facades\Cookie;
 use Statamic\Facades\Stache as StacheFacade;
 use Statamic\Facades\YAML;
-use Statamic\Stache\Stache;
 
 class BookmarkStore extends \Statamic\Stache\Stores\BasicStore
 {
@@ -45,17 +43,17 @@ class BookmarkStore extends \Statamic\Stache\Stores\BasicStore
             }
         }
 
-//        if (array_key_exists('id', $data)) {
-//            $bookmark->id($data['id']);
-//        }
-//
-//        if (array_key_exists('user_id', $data)) {
-//            $bookmark->userId($data['user_id']);
-//        }
-//
-//        if (array_key_exists('items', $data)) {
-//            $bookmark->items($data['items']);
-//        }
+        //        if (array_key_exists('id', $data)) {
+        //            $bookmark->id($data['id']);
+        //        }
+        //
+        //        if (array_key_exists('user_id', $data)) {
+        //            $bookmark->userId($data['user_id']);
+        //        }
+        //
+        //        if (array_key_exists('items', $data)) {
+        //            $bookmark->items($data['items']);
+        //        }
 
         if ($bookmark->id()) {
             return $bookmark;
@@ -72,17 +70,17 @@ class BookmarkStore extends \Statamic\Stache\Stores\BasicStore
      */
     public function save($item)
     {
-        if (!$item->id()) {
+        if (! $item->id()) {
             $item->id(StacheFacade::generateId());
         }
 
-        if (!$item->cookieId()) {
+        if (! $item->cookieId()) {
             $item->cookieId(StacheFacade::generateId());
         }
 
         parent::save($item);
 
-        cookie()->queue('bookmarker_collection', $item->cookieId(), 365*24*60);
+        cookie()->queue('bookmarker_collection', $item->cookieId(), 365 * 24 * 60);
 
         BookmarkCollectionSaved::dispatch($item);
     }

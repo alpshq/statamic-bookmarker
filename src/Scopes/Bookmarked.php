@@ -7,9 +7,6 @@ use Alps\Bookmarker\Data\BookmarkCollection;
 
 class Bookmarked extends \Statamic\Query\Scopes\Scope
 {
-    /**
-     * @inheritDoc
-     */
     public function apply($query, $values)
     {
         $value = $this->castValue($values['bookmark_value'] ?? null);

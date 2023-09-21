@@ -7,11 +7,7 @@ use Alps\Bookmarker\Data\BookmarkCollection;
 use Alps\Bookmarker\Services\PayloadHasher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
-use Statamic\Facades\Antlers;
-use Statamic\Support\Arr;
-use Statamic\Tags\Context;
 use Statamic\Tags\Tags;
-use Statamic\View\Cascade;
 
 class Bookmarker extends Tags
 {
@@ -28,15 +24,15 @@ class Bookmarker extends Tags
 
         $scalars = $this->params->filter(fn ($value) => is_scalar($value))->all();
 
-//        BookmarkCollection::query()
-//            ->whereNotNull('items.lol')
-//            ->where('items.lol', false)
-//            ->count();
+        //        BookmarkCollection::query()
+        //            ->whereNotNull('items.lol')
+        //            ->where('items.lol', false)
+        //            ->count();
 
         $collection = BookmarkCollection::user();
         $bookmark = $collection->getBookmark($id);
 
-        if (!$bookmark) {
+        if (! $bookmark) {
             $bookmark = Bookmark::make([
                 'id' => $id,
             ]);

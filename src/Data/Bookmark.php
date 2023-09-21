@@ -6,12 +6,13 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
-use Statamic\Support\Traits\FluentlyGetsAndSets;
 
 class Bookmark implements Arrayable
 {
     public string $id;
+
     public mixed $value = null;
+
     public ?Carbon $createdAt = null;
 
     public static function make(string|array $data): self
@@ -33,11 +34,11 @@ class Bookmark implements Arrayable
 
     public function set(string $prop, mixed $value): self
     {
-        if (!property_exists($this, $prop)) {
+        if (! property_exists($this, $prop)) {
             $prop = Str::camel($prop);
         }
 
-        if (!property_exists($this, $prop)) {
+        if (! property_exists($this, $prop)) {
             return $this;
         }
 
@@ -45,7 +46,7 @@ class Bookmark implements Arrayable
             $value = Carbon::make($value);
         }
 
-        if ($prop === 'value' && !is_scalar($value)) {
+        if ($prop === 'value' && ! is_scalar($value)) {
             $value = (string) $value;
         }
 
@@ -75,11 +76,11 @@ class Bookmark implements Arrayable
 
     public function total(mixed $value = true): int
     {
-        if (!$this->id) {
+        if (! $this->id) {
             return 0;
         }
 
-        if (!is_scalar($value)) {
+        if (! is_scalar($value)) {
             $value = (string) $value;
         }
 

@@ -5,24 +5,20 @@ namespace Alps\Bookmarker\Http\Controllers;
 use Alps\Bookmarker\Data\Bookmark;
 use Alps\Bookmarker\Data\BookmarkCollection;
 use Alps\Bookmarker\Services\PayloadHasher;
-use Alps\Bookmarker\Stache\BookmarkStore;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Statamic\StaticCaching\Cacher;
-use Statamic\StaticCaching\Cachers\ApplicationCacher;
 use Statamic\View\Antlers\Antlers;
-use Statamic\View\View;
 
 class SubmitController extends Controller
 {
     private array|null $payload = null;
 
     public function __construct(
-        private Antlers       $antlers,
+        private Antlers $antlers,
         private PayloadHasher $payloadHasher,
-        private Cacher        $cacher
-    )
-    {
+        private Cacher $cacher
+    ) {
     }
 
     public function handlePost(Request $request)
@@ -44,7 +40,7 @@ class SubmitController extends Controller
 
         $this->invalidatePageCache($request);
 
-        if (!$request->isXmlHttpRequest()) {
+        if (! $request->isXmlHttpRequest()) {
             return redirect()->back(201);
         }
 
@@ -66,7 +62,7 @@ class SubmitController extends Controller
 
         $this->invalidatePageCache($request);
 
-        if (!$request->isXmlHttpRequest()) {
+        if (! $request->isXmlHttpRequest()) {
             return redirect()->back(201);
         }
 
@@ -84,7 +80,7 @@ class SubmitController extends Controller
         }
 
         if (method_exists($this->cacher, 'getDomains')) {
-            $this->cacher->getDomains()->each(function($domain) use ($path) {
+            $this->cacher->getDomains()->each(function ($domain) use ($path) {
                 $url = '/' . ltrim($path, '/');
                 $this->cacher->invalidateUrl($url, $domain);
             });
@@ -121,7 +117,7 @@ class SubmitController extends Controller
 
         $payloadSignature = $request->input('payload_signature');
 
-        if (!$this->payloadHasher->verify($payload, $payloadSignature)) {
+        if (! $this->payloadHasher->verify($payload, $payloadSignature)) {
             abort(401, 'Payload signature invalid.');
         }
 
@@ -135,7 +131,7 @@ class SubmitController extends Controller
         $content = $payload['content'] ?? null;
         $data = $payload['viewData'] ?? [];
 
-        if (!$content) {
+        if (! $content) {
             return null;
         }
 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Alps\Bookmarker\Stache;
-
 
 class BookmarkQueryBuilder extends \Statamic\Stache\Query\Builder
 {

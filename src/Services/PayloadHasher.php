@@ -41,6 +41,6 @@ class PayloadHasher
 
         $parsed = json_decode($jsonString, true);
 
-        return !is_array($parsed) ? [] : $parsed;
+        return ! is_array($parsed) ? [] : $parsed;
     }
 }
